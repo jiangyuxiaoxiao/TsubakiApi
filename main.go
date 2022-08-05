@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	Log.InitLogger() //日志初始化
 	Config.Parse()   // 配置初始化
-	tsubaki.Run()    // 服务器运行
+	Log.InitLogger() //日志初始化
+	Tsubaki.Run()    // 服务器运行
 }

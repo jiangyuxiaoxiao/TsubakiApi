@@ -1,6 +1,7 @@
 package Log
 
 import (
+	"TsubakiApi/Config"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -31,11 +32,11 @@ func getEncoder() zapcore.Encoder {
 func getLogWriter() zapcore.WriteSyncer {
 	// 日志文件每1MB会切割并且在当前目录下最多保存5个备份
 	logger := lumberjack.Logger{
-		Filename:   "./Log/LogFile/Tsubaki.log", //Filename: 日志文件的位置
-		MaxSize:    1,                           //MaxSize：在进行切割之前，日志文件的最大大小（以MB为单位）
-		MaxBackups: 5,                           //MaxBackups：保留旧文件的最大个数
-		MaxAge:     30,                          //MaxAges：保留旧文件的最大天数
-		Compress:   false,                       //Compress：是否压缩/归档旧文件
+		Filename:   Config.Log.Filename,   //Filename: 日志文件的位置
+		MaxSize:    Config.Log.MaxSize,    //MaxSize：在进行切割之前，日志文件的最大大小（以MB为单位）
+		MaxBackups: Config.Log.MaxBackups, //MaxBackups：保留旧文件的最大个数
+		MaxAge:     Config.Log.MaxAge,     //MaxAges：保留旧文件的最大天数
+		Compress:   Config.Log.Compress,   //Compress：是否压缩/归档旧文件
 	}
 	return zapcore.AddSync(&logger)
 }

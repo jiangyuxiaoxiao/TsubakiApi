@@ -1,4 +1,4 @@
-package tsubaki
+package Tsubaki
 
 func Run() {
 
