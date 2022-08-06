@@ -25,13 +25,13 @@ func CreateDir(path string) {
 		return
 	}
 	if _exist {
-		fmt.Println("文件夹已存在！")
+		fmt.Printf("%s 文件夹已存在！\n", path)
 	} else {
 		err := os.Mkdir(path, os.ModePerm)
 		if err != nil {
 			fmt.Printf("创建目录异常 -> %v\n", err)
 		} else {
-			fmt.Println("创建成功!")
+			fmt.Printf("%s 文件夹创建成功!\n", path)
 		}
 	}
 }
