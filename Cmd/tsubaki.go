@@ -4,8 +4,10 @@ package Tsubaki
 import (
 	"TsubakiApi/Api/setu"
 	"TsubakiApi/Api/zao"
+	"TsubakiApi/Config"
 	"TsubakiApi/Log"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 func Run() {
@@ -15,10 +17,18 @@ func Run() {
 	zao.Run()
 	// 注册涩图路由
 	setu.Setu = router.Group("/setu")
-	err := router.Run(":1210")
-	//
+	setu.Run()
+	// 路由启动
+	port := Config.Server.Port //端口号
+	if port < 0 || port > 65535 {
+		Log.Logger.Errorf("Cmd.tsubaki: 端口号不合法。端口号范围0~65535")
+		panic("Cmd.tsubaki: 路由格式不合法。")
+	}
+	portString := ":" + strconv.Itoa(port)
+	err := router.Run(portString)
 	if err != nil {
-		Log.Logger.Errorf("路由启动失败。")
+		Log.Logger.Errorf("	Cmd.tsubaki: 路由启动失败。")
+		panic("	Cmd.tsubaki: 路由启动失败。")
 	}
 
 }

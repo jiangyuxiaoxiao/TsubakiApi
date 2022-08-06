@@ -7,3 +7,6 @@ log: # 运行日志配置
   MaxAge: 30 # 保留旧日志文件的最长天数
   Compress: false # 是否压缩旧日志文件
   DoNotDeleteLogFile: false # 为真时会保留所有日志文件，MaxBackup和MaxAge选项失效
+
+Server: # 服务器运行配置
+  port: 1210 # 端口号。默认为1210
