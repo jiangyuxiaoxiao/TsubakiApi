@@ -2,6 +2,7 @@
 package Tsubaki
 
 import (
+	"TsubakiApi/Api/setu"
 	"TsubakiApi/Api/zao"
 	"TsubakiApi/Log"
 	"github.com/gin-gonic/gin"
@@ -9,11 +10,15 @@ import (
 
 func Run() {
 	router := gin.Default()
-	zao.Zao = router.Group("/zao") // 注册枣子路由
+	// 注册枣子路由
+	zao.Zao = router.Group("/zao")
 	zao.Run()
-	err := router.Run()
+	// 注册涩图路由
+	setu.Setu = router.Group("/setu")
+	err := router.Run(":1210")
+	//
 	if err != nil {
 		Log.Logger.Errorf("路由启动失败。")
 	}
-	_ = router.Run()
+
 }
