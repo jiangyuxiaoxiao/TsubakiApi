@@ -12,8 +12,7 @@ var defaultConfig string
 
 //Live 三次元涩图路径
 type Live struct {
-	absPath      string `yaml:"absPath"`
-	relativePath string `yaml:"relativePath"`
+	AbsPath string `yaml:"AbsPath"`
 }
 
 var LiveConfig Live
@@ -30,8 +29,8 @@ func LoadConfig() error {
 	} // 直接返回错误信息到上一级
 	err = config.UnmarshalKey("live", &LiveConfig)
 	if err != nil {
-		fmt.Printf("Api/setu/live Config 配置加载出错，一般为配置文件格式出错导致。错误信息: %s\n", err)
-		return fmt.Errorf("Api/setu/live Config 配置加载出错，一般为配置文件格式出错导致。错误信息: %s\n", err)
+		fmt.Printf("setu/live Config 配置加载出错，一般为配置文件格式出错导致。错误信息: %s\n", err)
+		return fmt.Errorf("setu/live Config 配置加载出错，一般为配置文件格式出错导致。错误信息: %s\n", err)
 	}
 	return nil
 }
