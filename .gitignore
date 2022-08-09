@@ -20,3 +20,6 @@
 /Config/config.yaml
 /TsubakiApi
 /Api/setu/config.yaml
+/Api/voice/atri
+/Api/voice/atri_hifigan
+/Api/voice/atri.wav

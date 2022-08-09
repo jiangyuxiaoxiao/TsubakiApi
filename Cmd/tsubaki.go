@@ -3,6 +3,7 @@ package Tsubaki
 
 import (
 	"TsubakiApi/Api/setu"
+	"TsubakiApi/Api/voice"
 	"TsubakiApi/Api/zao"
 	"TsubakiApi/Config"
 	"TsubakiApi/Log"
@@ -18,6 +19,9 @@ func Run() {
 	// 注册涩图路由
 	setu.Setu = router.Group("/setu")
 	setu.Run()
+	// 注册拟声路由
+	voice.Voice = router.Group("/voice")
+	voice.Run()
 	// 路由启动
 	port := Config.Server.Port //端口号
 	if port < 0 || port > 65535 {

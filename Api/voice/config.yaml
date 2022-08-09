@@ -1,0 +1,11 @@
+# 二次元人物声音合成相关设置
+
+# 亚托莉
+atri:
+  ModulePath: "C:/Users/妖梦/Desktop/TsubakiApi/Api/voice/atri"  # 亚托莉模型的绝对路径
+  OutPut: "C:/Users/妖梦/Desktop/TsubakiApi/Api/voice/atri"  # 输出文件的路径 例如 D:/1 不带后缀
+  Tacotron: "D:/AtriVoice/Tacotron2Program/inference"  # Tacotron2的路径
+  NoisePath: "D:/AtriVoice/Tacotron2Program/inference/denoise" # 降噪文件名
+
+
+

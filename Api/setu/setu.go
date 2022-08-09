@@ -15,8 +15,8 @@ var LiveDirError bool = false              //live文件夹读取出错标志
 var LiveSetus []string = make([]string, 0) //live文件夹下的所有涩图路径string
 
 func init() {
-
-	err := LoadConfig() //加载setu插件配置
+	// 加载setu插件配置
+	err := LoadConfig()
 	if err != nil {
 		FlagLoadConfigError = true
 	}
@@ -35,6 +35,7 @@ func Run() {
 	if FlagLoadConfigError {
 		return
 	}
+	// live路由
 	if LiveDirError {
 		fmt.Printf("setu/live: 加载涩图文件夹出错，清检查配置文件！\n")
 	} else {
