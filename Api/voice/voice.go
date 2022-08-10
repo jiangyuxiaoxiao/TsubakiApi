@@ -28,29 +28,15 @@ func init() {
 	}
 	// atri相关初始化
 	// yuzu相关初始化 进行交互式控制台处理
-	yuzuCmd = exec.Command(YuzuConfig.Vits)
+	yuzuCmd = exec.Command("cmd", "/C", YuzuConfig.Vits)
 	YuzuIn, _ = yuzuCmd.StdinPipe()
 	yuzuCmd.Stdout = os.Stdout
 	err = yuzuCmd.Start()
 	if err != nil {
 		fmt.Println(err)
 	}
-	WriteBuff = []byte(YuzuConfig.ModulePath + "\n")
-	_, err = YuzuIn.Write(WriteBuff)
-	if err != nil {
-		FlagYuzuStartError = true
-	}
-	if FlagYuzuStartError {
-		fmt.Printf("voice/yuzu 控制台启动失败。错误信息%s\n", err)
-	}
-	WriteBuff = []byte(YuzuConfig.Config + "\n")
-	_, err = YuzuIn.Write(WriteBuff)
-	if err != nil {
-		FlagYuzuStartError = true
-	}
-	if FlagYuzuStartError {
-		fmt.Printf("voice/yuzu 控制台启动失败。错误信息%s\n", err)
-	}
+	_, _ = io.WriteString(YuzuIn, YuzuConfig.ModulePath+"\n")
+	_, _ = io.WriteString(YuzuIn, YuzuConfig.Config+"\n")
 }
 
 func Run() {
@@ -88,46 +74,19 @@ func atri(context *gin.Context) {
 func yuzu(context *gin.Context) {
 	lock.Lock()
 	defer lock.Unlock()
-	typeString := "t\n"
-	WriteBuff = []byte(typeString)
-	_, _ = YuzuIn.Write(WriteBuff)
-	fmt.Println(WriteBuff)
+	_, _ = io.WriteString(YuzuIn, "t\n")
 	// 获取文本
 	text, _ := context.GetQuery("text")
-	text = text
-	WriteBuff = []byte(text + "\n")
-	_, _ = YuzuIn.Write(WriteBuff)
-	fmt.Println(WriteBuff)
+	text = text + "\n"
+	_, _ = io.WriteString(YuzuIn, text)
 	// 获取选择的人物
 	id, _ := context.GetQuery("id")
-	WriteBuff = []byte(id + "\n")
-	_, _ = YuzuIn.Write(WriteBuff)
-	fmt.Println(WriteBuff)
+	_, _ = io.WriteString(YuzuIn, id+"\n")
 	// 获取存放路径
-	path := YuzuConfig.Output + "/output.wav\n"
-	WriteBuff = []byte(path)
-	_, _ = YuzuIn.Write(WriteBuff)
-	fmt.Println(WriteBuff)
+	path := YuzuConfig.Output
+	_, _ = io.WriteString(YuzuIn, path+"/output.wav\n")
 	// 再次循环
-	WriteBuff = []byte("y\n")
-	_, _ = YuzuIn.Write(WriteBuff)
-	fmt.Println(WriteBuff)
-
-	/*
-		text, _ := context.GetQuery("text")
-		text = text + "\n"
-		yuzuCmd.Stdin.Read([]byte(text))
-		id, _ := context.GetQuery("id")
-		id = id + "\n"
-		yuzuCmd.Stdin.Read([]byte(id))
-		path := YuzuConfig.Output + "/output.wav\n"
-		path = path + "\n"
-		myrune, _ := utf8.DecodeRuneInString(path)
-		utf8.EncodeRune(WriteBuff, myrune)
-		yuzuCmd.Stdin.Read(WriteBuff)
-		content := "y\n"
-		yuzuCmd.Stdin.Read([]byte(content))
-	*/
+	_, _ = io.WriteString(YuzuIn, "y\n")
 	// 发送请求
 	time.Sleep(2000 * time.Millisecond)
 	context.File(YuzuConfig.Output + "/output.wav")
