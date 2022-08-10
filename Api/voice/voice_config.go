@@ -18,7 +18,16 @@ type Atri struct {
 	NoiseFile  string `yaml:"NoiseFile"`  //降噪音频路径
 }
 
+//Yuzu Yuzu相关语音配置
+type Yuzu struct {
+	ModulePath string `yaml:"ModulePath"` //柚子社模型的绝对路径
+	Config     string `yaml:"Config"`     //柚子社设置相关路径
+	Output     string `yaml:"Output"`     //输出路径
+	Vits       string `yaml:"Vits"`       //VITS执行程序路径
+}
+
 var AtriConfig Atri
+var YuzuConfig Yuzu
 
 // LoadConfig 配置加载
 func LoadConfig() error {
@@ -36,6 +45,12 @@ func LoadConfig() error {
 	if err != nil {
 		fmt.Printf("voice/atri Config 配置加载出错，一般为配置文件格式出错导致。错误信息: %s\n", err)
 		return fmt.Errorf("voice/atri Config 配置加载出错，一般为配置文件格式出错导致。错误信息: %s\n", err)
+	}
+	//加载yuzu相关配置
+	err = config.UnmarshalKey("yuzu", &YuzuConfig)
+	if err != nil {
+		fmt.Printf("voice/yuzu Config 配置加载出错，一般为配置文件格式出错导致。错误信息: %s\n", err)
+		return fmt.Errorf("voice/yuzu Config 配置加载出错，一般为配置文件格式出错导致。错误信息: %s\n", err)
 	}
 	//加载配置完成
 	return nil

@@ -7,5 +7,11 @@ atri:
   Tacotron: "D:/AtriVoice/Tacotron2Program/inference"  # Tacotron2的路径
   NoisePath: "D:/AtriVoice/Tacotron2Program/inference/denoise" # 降噪文件名
 
+# 柚子社语音合成
+yuzu:
+  ModulePath: "D:/YuzuVoice/Data/243_epochs.pth" # 柚子社模型的绝对路径
+  Config: "D:/YuzuVoice/Data/config.json" # 柚子社设置相关路径
+  Output: "D:/YuzuVoice/Data/voice" # 输出路径
+  Vits: "D:/YuzuVoice/MoeGoe/MoeGoe.exe" # VITS执行程序路径
 
 

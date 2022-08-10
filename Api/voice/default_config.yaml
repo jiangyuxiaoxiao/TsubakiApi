@@ -7,5 +7,12 @@ atri:
   Tacotron: ""  # Tacotron2的路径
   NoisePath: "" # 降噪文件名
 
+# 柚子社语音合成
+yuzu:
+  ModulePath: "" # 柚子社模型的绝对路径
+  Config: "" # 柚子社设置相关路径
+  Output: "" # 输出路径
+  Vits: "" # VITS执行程序路径
+
 
 
