@@ -20,10 +20,11 @@ type Atri struct {
 
 //Yuzu Yuzu相关语音配置
 type Yuzu struct {
-	ModulePath string `yaml:"ModulePath"` //柚子社模型的绝对路径
-	Config     string `yaml:"Config"`     //柚子社设置相关路径
-	Output     string `yaml:"Output"`     //输出路径
-	Vits       string `yaml:"Vits"`       //VITS执行程序路径
+	ModulePath       string `yaml:"ModulePath"`       //柚子社模型的绝对路径
+	Config           string `yaml:"Config"`           //柚子社设置相关路径
+	Output           string `yaml:"Output"`           //输出路径
+	GoeMoePythonPath string `yaml:"GoeMoePythonPath"` //VGoeMoePython文件路径
+	StringFile       string `yaml:"StringFile"`       //缓存日文设置路径
 }
 
 var AtriConfig Atri

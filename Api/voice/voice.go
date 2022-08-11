@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"sync"
-	"time"
 )
 
 var Voice *gin.RouterGroup
@@ -18,7 +17,7 @@ var YuzuIn io.WriteCloser
 var YuzuOut io.ReadCloser
 var WriteBuff []byte = make([]byte, 4096)
 var lock sync.Mutex
-var yuzuCmd *exec.Cmd
+var YuzuCmd *exec.Cmd
 
 func init() {
 	// 加载voice插件配置
@@ -28,15 +27,6 @@ func init() {
 	}
 	// atri相关初始化
 	// yuzu相关初始化 进行交互式控制台处理
-	yuzuCmd = exec.Command("cmd", "/C", YuzuConfig.Vits)
-	YuzuIn, _ = yuzuCmd.StdinPipe()
-	yuzuCmd.Stdout = os.Stdout
-	err = yuzuCmd.Start()
-	if err != nil {
-		fmt.Println(err)
-	}
-	_, _ = io.WriteString(YuzuIn, YuzuConfig.ModulePath+"\n")
-	_, _ = io.WriteString(YuzuIn, YuzuConfig.Config+"\n")
 }
 
 func Run() {
@@ -74,11 +64,25 @@ func atri(context *gin.Context) {
 func yuzu(context *gin.Context) {
 	lock.Lock()
 	defer lock.Unlock()
+	YuzuCmd = exec.Command("cmd", "/C", "python MoeGoe.py")
+	YuzuCmd.Dir = YuzuConfig.GoeMoePythonPath
+	YuzuIn, _ = YuzuCmd.StdinPipe()
+	YuzuCmd.Stdout = os.Stdout
+	err := YuzuCmd.Start()
+	if err != nil {
+		fmt.Println(err)
+	}
+	_, _ = io.WriteString(YuzuIn, YuzuConfig.ModulePath+"\n")
+	_, _ = io.WriteString(YuzuIn, YuzuConfig.Config+"\n")
 	_, _ = io.WriteString(YuzuIn, "t\n")
 	// 获取文本
 	text, _ := context.GetQuery("text")
 	text = text + "\n"
-	_, _ = io.WriteString(YuzuIn, text)
+	file, _ := os.OpenFile(YuzuConfig.StringFile+"/1.txt", os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0777)
+	file.WriteString(text)
+	file.Close()
+	text = YuzuConfig.StringFile + "/1.txt"
+	_, _ = io.WriteString(YuzuIn, text+"\n")
 	// 获取选择的人物
 	id, _ := context.GetQuery("id")
 	_, _ = io.WriteString(YuzuIn, id+"\n")
@@ -86,8 +90,8 @@ func yuzu(context *gin.Context) {
 	path := YuzuConfig.Output
 	_, _ = io.WriteString(YuzuIn, path+"/output.wav\n")
 	// 再次循环
-	_, _ = io.WriteString(YuzuIn, "y\n")
+	_, _ = io.WriteString(YuzuIn, "n\n")
 	// 发送请求
-	time.Sleep(2000 * time.Millisecond)
+	YuzuCmd.Wait()
 	context.File(YuzuConfig.Output + "/output.wav")
 }

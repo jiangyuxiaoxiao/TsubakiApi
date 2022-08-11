@@ -7,11 +7,12 @@ atri:
   Tacotron: "D:/AtriVoice/Tacotron2Program/inference"  # Tacotron2的路径
   NoisePath: "D:/AtriVoice/Tacotron2Program/inference/denoise" # 降噪文件名
 
-# 柚子社语音合成
+# 柚子社语音合成 所有路径名不允许非英文字符
 yuzu:
-  ModulePath: "D:/YuzuVoice/Data/243_epochs.pth" # 柚子社模型的绝对路径
-  Config: "D:/YuzuVoice/Data/config.json" # 柚子社设置相关路径
-  Output: "D:/YuzuVoice/Data/voice" # 输出路径
-  Vits: "D:/YuzuVoice/MoeGoe/MoeGoe.exe" # VITS执行程序路径
+  ModulePath: "D:/Voice/YuzuVoice/Data/365_epochs.pth" # 柚子社模型的绝对路径 带文件名
+  Config: "D:/Voice/YuzuVoice/Data/config.json" # 柚子社设置相关路径 带文件名
+  Output: "D:/Voice/YuzuVoice/Data/voice" # 输出路径 不带文件名
+  GoeMoePythonPath: "D:/MoeGoe-master/MoeGoe-master" # VGoeMoePython项目文件夹路径
+  StringFile: "D:/Voice/YuzuVoice/Data/voice" # 缓存输出文件夹路径 不带文件名
 
 
