@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strconv"
 	"sync"
 )
 
@@ -18,6 +19,7 @@ var YuzuOut io.ReadCloser
 var WriteBuff []byte = make([]byte, 4096)
 var lock sync.Mutex
 var YuzuCmd *exec.Cmd
+var YuzuLock []sync.Mutex
 
 func init() {
 	// 加载voice插件配置
@@ -27,6 +29,7 @@ func init() {
 	}
 	// atri相关初始化
 	// yuzu相关初始化 进行交互式控制台处理
+	YuzuLock = make([]sync.Mutex, YuzuConfig.MaxConcurrent) //柚子锁
 }
 
 func Run() {
@@ -62,12 +65,18 @@ func atri(context *gin.Context) {
 }
 
 func yuzu(context *gin.Context) {
-	lock.Lock()
-	defer lock.Unlock()
+	var lockNumber int // 锁编号
+	for i, _ := range YuzuLock {
+		ok := YuzuLock[i].TryLock()
+		if ok {
+			lockNumber = i
+			break
+		}
+	}
+	defer YuzuLock[lockNumber].Unlock()
 	YuzuCmd = exec.Command("cmd", "/C", "python MoeGoe.py")
 	YuzuCmd.Dir = YuzuConfig.GoeMoePythonPath
 	YuzuIn, _ = YuzuCmd.StdinPipe()
-	YuzuCmd.Stdout = os.Stdout
 	err := YuzuCmd.Start()
 	if err != nil {
 		fmt.Println(err)
@@ -78,20 +87,21 @@ func yuzu(context *gin.Context) {
 	// 获取文本
 	text, _ := context.GetQuery("text")
 	text = text + "\n"
-	file, _ := os.OpenFile(YuzuConfig.StringFile+"/1.txt", os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0777)
+	fileName := YuzuConfig.StringFile + "/" + strconv.Itoa(lockNumber) + ".txt" //文件名 与锁对应
+	file, _ := os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0777)
 	file.WriteString(text)
 	file.Close()
-	text = YuzuConfig.StringFile + "/1.txt"
-	_, _ = io.WriteString(YuzuIn, text+"\n")
+	_, _ = io.WriteString(YuzuIn, fileName+"\n")
 	// 获取选择的人物
 	id, _ := context.GetQuery("id")
 	_, _ = io.WriteString(YuzuIn, id+"\n")
 	// 获取存放路径
 	path := YuzuConfig.Output
-	_, _ = io.WriteString(YuzuIn, path+"/output.wav\n")
+	path = path + "/" + strconv.Itoa(lockNumber) + ".wav" //文件名 与锁对应
+	_, _ = io.WriteString(YuzuIn, path+"\n")
 	// 再次循环
 	_, _ = io.WriteString(YuzuIn, "n\n")
 	// 发送请求
 	YuzuCmd.Wait()
-	context.File(YuzuConfig.Output + "/output.wav")
+	context.File(path)
 }

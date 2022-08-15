@@ -14,6 +14,7 @@ yuzu:
   Output: "" # 输出路径 不带文件名
   GoeMoePythonPath: "" # VGoeMoePython项目文件夹路径
   StringFile: "" # 缓存输出文件夹路径 不带文件名
+  MaxConcurrent: 5 # 最大并发数
 
 
 

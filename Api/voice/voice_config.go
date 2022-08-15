@@ -25,6 +25,7 @@ type Yuzu struct {
 	Output           string `yaml:"Output"`           //输出路径
 	GoeMoePythonPath string `yaml:"GoeMoePythonPath"` //VGoeMoePython文件路径
 	StringFile       string `yaml:"StringFile"`       //缓存日文设置路径
+	MaxConcurrent    int    `yaml:"MaxConcurrent"`    //最大并发数
 }
 
 var AtriConfig Atri
