@@ -13,6 +13,8 @@ import (
 
 func Run() {
 	router := gin.Default()
+	_ = router.SetTrustedProxies(nil)
+	// gin.SetMode(gin.ReleaseMode) // 设置发布环境
 	// 注册枣子路由
 	zao.Zao = router.Group("/zao")
 	zao.Run()

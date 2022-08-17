@@ -10,11 +10,13 @@ atri:
 # 柚子社语音合成 所有路径名不允许非英文字符
 yuzu:
   ModulePath: "" # 柚子社模型的绝对路径 带文件名
-  Config: "" # 柚子社设置相关路径 带文件名
+  Config: "" # 柚子社模型配置文件相关路径 带文件名
   Output: "" # 输出路径 不带文件名
   GoeMoePythonPath: "" # VGoeMoePython项目文件夹路径
   StringFile: "" # 缓存输出文件夹路径 不带文件名
   MaxConcurrent: 5 # 最大并发数
+  StellaPath: "" # 星光咖啡馆模型的绝对路径 带文件名
+  StellaConfig: "" # 星光咖啡馆模型配置文件的绝对路径 带文件名
 
 
 

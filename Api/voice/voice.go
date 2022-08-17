@@ -65,6 +65,7 @@ func atri(context *gin.Context) {
 }
 
 func yuzu(context *gin.Context) {
+	// 目前包含柚子社十一女主模型推理
 	var lockNumber int // 锁编号
 	for i, _ := range YuzuLock {
 		ok := YuzuLock[i].TryLock()
@@ -81,6 +82,27 @@ func yuzu(context *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	//解析分流 id=0-6 yuzu id=7-11 星巴克 id=？404
+	// 获取选择的人物
+	id, _ := context.GetQuery("id")
+	idNum, err := strconv.Atoi(id)
+	if err != nil {
+		context.JSON(404, "")
+		return
+	}
+	switch {
+	case 0 <= idNum && idNum <= 6:
+		yuzuHandle(context, lockNumber, idNum)
+	case 7 <= idNum && idNum <= 11:
+		stellaHandle(context, lockNumber, idNum)
+	default:
+		context.JSON(404, "")
+		return
+	}
+
+}
+
+func yuzuHandle(context *gin.Context, lockNumber int, idNum int) {
 	_, _ = io.WriteString(YuzuIn, YuzuConfig.ModulePath+"\n")
 	_, _ = io.WriteString(YuzuIn, YuzuConfig.Config+"\n")
 	_, _ = io.WriteString(YuzuIn, "t\n")
@@ -92,9 +114,32 @@ func yuzu(context *gin.Context) {
 	file.WriteString(text)
 	file.Close()
 	_, _ = io.WriteString(YuzuIn, fileName+"\n")
-	// 获取选择的人物
-	id, _ := context.GetQuery("id")
-	_, _ = io.WriteString(YuzuIn, id+"\n")
+	_, _ = io.WriteString(YuzuIn, strconv.Itoa(idNum)+"\n")
+	// 获取存放路径
+	path := YuzuConfig.Output
+	path = path + "/" + strconv.Itoa(lockNumber) + ".wav" //文件名 与锁对应
+	_, _ = io.WriteString(YuzuIn, path+"\n")
+	// 再次循环
+	_, _ = io.WriteString(YuzuIn, "n\n")
+	// 发送请求
+	YuzuCmd.Wait()
+	context.File(path)
+}
+
+func stellaHandle(context *gin.Context, lockNumber int, idNum int) {
+	idNum = idNum - 7
+	_, _ = io.WriteString(YuzuIn, YuzuConfig.StellaPath+"\n")
+	_, _ = io.WriteString(YuzuIn, YuzuConfig.StellaConfig+"\n")
+	_, _ = io.WriteString(YuzuIn, "t\n")
+	// 获取文本
+	text, _ := context.GetQuery("text")
+	text = text + "\n"
+	fileName := YuzuConfig.StringFile + "/" + strconv.Itoa(lockNumber) + ".txt" //文件名 与锁对应
+	file, _ := os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0777)
+	file.WriteString(text)
+	file.Close()
+	_, _ = io.WriteString(YuzuIn, fileName+"\n")
+	_, _ = io.WriteString(YuzuIn, strconv.Itoa(idNum)+"\n")
 	// 获取存放路径
 	path := YuzuConfig.Output
 	path = path + "/" + strconv.Itoa(lockNumber) + ".wav" //文件名 与锁对应
