@@ -28,6 +28,10 @@ type Yuzu struct {
 	MaxConcurrent    int    `yaml:"MaxConcurrent"`    //最大并发数
 	StellaPath       string `yaml:"StellaPath"`       //星光咖啡馆模型绝对路径
 	StellaConfig     string `yaml:"StellaConfig"`     //星光咖啡馆配置文件路径
+	AtriPath         string `yaml:"AtriPath"`         //亚托莉模型绝对路径
+	AtriConfig       string `yaml:"AtriConfig"`       //亚托莉模型配置文件路径
+	SabbatPath       string `yaml:"SabbatPath"`       //魔女的夜宴模型绝对路径
+	SabbatConfig     string `yaml:"SabbatConfig"`     //魔女的夜宴模型配置文件路径
 }
 
 var AtriConfig Atri

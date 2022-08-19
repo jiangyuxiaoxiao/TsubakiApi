@@ -66,13 +66,17 @@ func atri(context *gin.Context) {
 
 func yuzu(context *gin.Context) {
 	// 目前包含柚子社十一女主模型推理
+	var ok bool
 	var lockNumber int // 锁编号
 	for i, _ := range YuzuLock {
-		ok := YuzuLock[i].TryLock()
+		ok = YuzuLock[i].TryLock()
 		if ok {
 			lockNumber = i
 			break
 		}
+	}
+	if !ok {
+		context.JSON(404, "")
 	}
 	defer YuzuLock[lockNumber].Unlock()
 	YuzuCmd = exec.Command("cmd", "/C", "python MoeGoe.py")
@@ -95,6 +99,10 @@ func yuzu(context *gin.Context) {
 		yuzuHandle(context, lockNumber, idNum)
 	case 7 <= idNum && idNum <= 11:
 		stellaHandle(context, lockNumber, idNum)
+	case idNum == 12:
+		atriHandle(context, lockNumber, idNum)
+	case 13 <= idNum && idNum <= 20:
+		sabbatHandle(context, lockNumber, idNum)
 	default:
 		context.JSON(404, "")
 		return
@@ -102,6 +110,7 @@ func yuzu(context *gin.Context) {
 
 }
 
+// 千恋万花模型加载函数
 func yuzuHandle(context *gin.Context, lockNumber int, idNum int) {
 	_, _ = io.WriteString(YuzuIn, YuzuConfig.ModulePath+"\n")
 	_, _ = io.WriteString(YuzuIn, YuzuConfig.Config+"\n")
@@ -126,10 +135,63 @@ func yuzuHandle(context *gin.Context, lockNumber int, idNum int) {
 	context.File(path)
 }
 
+// 星光咖啡馆模型加载函数
 func stellaHandle(context *gin.Context, lockNumber int, idNum int) {
 	idNum = idNum - 7
 	_, _ = io.WriteString(YuzuIn, YuzuConfig.StellaPath+"\n")
 	_, _ = io.WriteString(YuzuIn, YuzuConfig.StellaConfig+"\n")
+	_, _ = io.WriteString(YuzuIn, "t\n")
+	// 获取文本
+	text, _ := context.GetQuery("text")
+	text = text + "\n"
+	fileName := YuzuConfig.StringFile + "/" + strconv.Itoa(lockNumber) + ".txt" //文件名 与锁对应
+	file, _ := os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0777)
+	file.WriteString(text)
+	file.Close()
+	_, _ = io.WriteString(YuzuIn, fileName+"\n")
+	_, _ = io.WriteString(YuzuIn, strconv.Itoa(idNum)+"\n")
+	// 获取存放路径
+	path := YuzuConfig.Output
+	path = path + "/" + strconv.Itoa(lockNumber) + ".wav" //文件名 与锁对应
+	_, _ = io.WriteString(YuzuIn, path+"\n")
+	// 再次循环
+	_, _ = io.WriteString(YuzuIn, "n\n")
+	// 发送请求
+	YuzuCmd.Wait()
+	context.File(path)
+}
+
+//亚托莉模型加载函数
+func atriHandle(context *gin.Context, lockNumber int, idNum int) {
+	idNum = 0
+	_, _ = io.WriteString(YuzuIn, YuzuConfig.AtriPath+"\n")
+	_, _ = io.WriteString(YuzuIn, YuzuConfig.AtriConfig+"\n")
+	_, _ = io.WriteString(YuzuIn, "t\n")
+	// 获取文本
+	text, _ := context.GetQuery("text")
+	text = text + "\n"
+	fileName := YuzuConfig.StringFile + "/" + strconv.Itoa(lockNumber) + ".txt" //文件名 与锁对应
+	file, _ := os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0777)
+	file.WriteString(text)
+	file.Close()
+	_, _ = io.WriteString(YuzuIn, fileName+"\n")
+	_, _ = io.WriteString(YuzuIn, strconv.Itoa(idNum)+"\n")
+	// 获取存放路径
+	path := YuzuConfig.Output
+	path = path + "/" + strconv.Itoa(lockNumber) + ".wav" //文件名 与锁对应
+	_, _ = io.WriteString(YuzuIn, path+"\n")
+	// 再次循环
+	_, _ = io.WriteString(YuzuIn, "n\n")
+	// 发送请求
+	YuzuCmd.Wait()
+	context.File(path)
+}
+
+//魔女的夜宴模型加载函数
+func sabbatHandle(context *gin.Context, lockNumber int, idNum int) {
+	idNum = idNum - 13
+	_, _ = io.WriteString(YuzuIn, YuzuConfig.SabbatPath+"\n")
+	_, _ = io.WriteString(YuzuIn, YuzuConfig.SabbatConfig+"\n")
 	_, _ = io.WriteString(YuzuIn, "t\n")
 	// 获取文本
 	text, _ := context.GetQuery("text")
