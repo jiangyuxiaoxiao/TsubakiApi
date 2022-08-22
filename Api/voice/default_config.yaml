@@ -19,8 +19,10 @@ yuzu:
   StellaConfig: "" # 星光咖啡馆模型配置文件的绝对路径 带文件名
   AtriPath: "" # Atri VITS模型的绝对路径 带文件名
   AtriConfig: "" # Atri模型配置文件的绝对路径 带文件名
-  SabbatPath: "" # 魔女的夜宴模型的相关路径
+  SabbatPath: "" # 魔女的夜宴模型的相关路径 带文件名
   SabbatConfig: "" # 魔女的夜宴模型配置文件的绝对路径 带文件名
+  SoraPath: "" # 缘之空模型的绝对路径 带文件名
+  SoraConfig: "" # 缘之空模型配置文件的绝对路径 带文件名
 
 
 

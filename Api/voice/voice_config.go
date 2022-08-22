@@ -32,6 +32,8 @@ type Yuzu struct {
 	AtriConfig       string `yaml:"AtriConfig"`       //亚托莉模型配置文件路径
 	SabbatPath       string `yaml:"SabbatPath"`       //魔女的夜宴模型绝对路径
 	SabbatConfig     string `yaml:"SabbatConfig"`     //魔女的夜宴模型配置文件路径
+	SoraPath         string `yaml:"SoraPath"`         //缘之空模型绝对路径
+	SoraConfig       string `yaml:"SoraConfig"`       //缘之空模型配置文件路径
 }
 
 var AtriConfig Atri

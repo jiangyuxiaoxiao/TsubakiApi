@@ -96,18 +96,48 @@ func yuzu(context *gin.Context) {
 	}
 	switch {
 	case 0 <= idNum && idNum <= 6:
-		yuzuHandle(context, lockNumber, idNum)
+		Path := YuzuConfig.ModulePath
+		Config := YuzuConfig.Config
+		MoeGoeHandle(context, lockNumber, idNum, Path, Config)
 	case 7 <= idNum && idNum <= 11:
-		stellaHandle(context, lockNumber, idNum)
+		idNum = idNum - 7
+		Path := YuzuConfig.ModulePath
+		Config := YuzuConfig.Config
+		MoeGoeHandle(context, lockNumber, idNum, Path, Config)
 	case idNum == 12:
 		atriHandle(context, lockNumber, idNum)
 	case 13 <= idNum && idNum <= 20:
 		sabbatHandle(context, lockNumber, idNum)
+	case 21 <= idNum && idNum <= 24:
+		soraHandle(context, lockNumber, idNum)
 	default:
 		context.JSON(404, "")
 		return
 	}
 
+}
+func MoeGoeHandle(context *gin.Context, lockNumber int, idNum int, Path string, Config string) {
+	_, _ = io.WriteString(YuzuIn, Path+"\n")
+	_, _ = io.WriteString(YuzuIn, Config+"\n")
+	_, _ = io.WriteString(YuzuIn, "t\n")
+	// 获取文本
+	text, _ := context.GetQuery("text")
+	text = text + "\n"
+	fileName := YuzuConfig.StringFile + "/" + strconv.Itoa(lockNumber) + ".txt" //文件名 与锁对应
+	file, _ := os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0777)
+	file.WriteString(text)
+	file.Close()
+	_, _ = io.WriteString(YuzuIn, fileName+"\n")
+	_, _ = io.WriteString(YuzuIn, strconv.Itoa(idNum)+"\n")
+	// 获取存放路径
+	path := YuzuConfig.Output
+	path = path + "/" + strconv.Itoa(lockNumber) + ".wav" //文件名 与锁对应
+	_, _ = io.WriteString(YuzuIn, path+"\n")
+	// 再次循环
+	_, _ = io.WriteString(YuzuIn, "n\n")
+	// 发送请求
+	YuzuCmd.Wait()
+	context.File(path)
 }
 
 // 千恋万花模型加载函数
@@ -192,6 +222,32 @@ func sabbatHandle(context *gin.Context, lockNumber int, idNum int) {
 	idNum = idNum - 13
 	_, _ = io.WriteString(YuzuIn, YuzuConfig.SabbatPath+"\n")
 	_, _ = io.WriteString(YuzuIn, YuzuConfig.SabbatConfig+"\n")
+	_, _ = io.WriteString(YuzuIn, "t\n")
+	// 获取文本
+	text, _ := context.GetQuery("text")
+	text = text + "\n"
+	fileName := YuzuConfig.StringFile + "/" + strconv.Itoa(lockNumber) + ".txt" //文件名 与锁对应
+	file, _ := os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0777)
+	file.WriteString(text)
+	file.Close()
+	_, _ = io.WriteString(YuzuIn, fileName+"\n")
+	_, _ = io.WriteString(YuzuIn, strconv.Itoa(idNum)+"\n")
+	// 获取存放路径
+	path := YuzuConfig.Output
+	path = path + "/" + strconv.Itoa(lockNumber) + ".wav" //文件名 与锁对应
+	_, _ = io.WriteString(YuzuIn, path+"\n")
+	// 再次循环
+	_, _ = io.WriteString(YuzuIn, "n\n")
+	// 发送请求
+	YuzuCmd.Wait()
+	context.File(path)
+}
+
+//穹妹模型加载函数
+func soraHandle(context *gin.Context, lockNumber int, idNum int) {
+	idNum = idNum - 21
+	_, _ = io.WriteString(YuzuIn, YuzuConfig.SoraPath+"\n")
+	_, _ = io.WriteString(YuzuIn, YuzuConfig.SoraConfig+"\n")
 	_, _ = io.WriteString(YuzuIn, "t\n")
 	// 获取文本
 	text, _ := context.GetQuery("text")
