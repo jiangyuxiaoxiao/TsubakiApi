@@ -14,7 +14,7 @@ yuzu:
   Output: "" # 输出路径 不带文件名
   GoeMoePythonPath: "" # VGoeMoePython项目文件夹路径
   StringFile: "" # 缓存输出文件夹路径 不带文件名
-  MaxConcurrent: 5 # 最大并发数
+  MaxConcurrent: 2 # 最大并发数
   StellaPath: "" # 星光咖啡馆模型的绝对路径 带文件名
   StellaConfig: "" # 星光咖啡馆模型配置文件的绝对路径 带文件名
   AtriPath: "" # Atri VITS模型的绝对路径 带文件名
@@ -25,6 +25,8 @@ yuzu:
   SoraConfig: "" # 缘之空模型配置文件的绝对路径 带文件名
   HamiPath: "" # 灵感满溢的甜蜜创想模型的绝对路径 带文件名
   HamiConfig: "" # 灵感满溢的甜蜜创想配置文件的绝对路径 带文件名
+  HoshishiroPath: "" # 星空列车与白的旅行模型的绝对路径 带文件名
+  HoshishiroConfig: "" # 星空列车与白的旅行模型配置文件的绝对路径 带文件名
 
 
 

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
+	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"strconv"
@@ -14,10 +16,6 @@ var Voice *gin.RouterGroup
 var FlagLoadConfigError bool = false //配置文件读取出错标志
 var FlagYuzuStartError bool = false  //yuzu初始化启动标志
 
-var YuzuIn io.WriteCloser
-var YuzuOut io.ReadCloser
-var WriteBuff []byte = make([]byte, 4096)
-var lock sync.Mutex
 var YuzuCmd *exec.Cmd
 var YuzuLock []sync.Mutex
 
@@ -30,6 +28,18 @@ func init() {
 	// atri相关初始化
 	// yuzu相关初始化 进行交互式控制台处理
 	YuzuLock = make([]sync.Mutex, YuzuConfig.MaxConcurrent) //柚子锁
+	// moegoe进程初始化
+	for i := 0; i < YuzuConfig.MaxConcurrent; i++ {
+		arg := "python MoeGoe.py" + " " + strconv.Itoa(12100+i)
+		YuzuCmd = exec.Command("cmd", "/C", arg)
+		YuzuCmd.Dir = YuzuConfig.GoeMoePythonPath
+		// YuzuIn, _ = YuzuCmd.StdinPipe()
+		err = YuzuCmd.Start()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
 }
 
 func Run() {
@@ -79,13 +89,6 @@ func yuzu(context *gin.Context) {
 		context.JSON(404, "")
 	}
 	defer YuzuLock[lockNumber].Unlock()
-	YuzuCmd = exec.Command("cmd", "/C", "python MoeGoe.py")
-	YuzuCmd.Dir = YuzuConfig.GoeMoePythonPath
-	YuzuIn, _ = YuzuCmd.StdinPipe()
-	err := YuzuCmd.Start()
-	if err != nil {
-		fmt.Println(err)
-	}
 	//解析分流 id=0-6 yuzu id=7-11 星巴克 id=？404
 	// 获取选择的人物
 	id, _ := context.GetQuery("id")
@@ -98,58 +101,74 @@ func yuzu(context *gin.Context) {
 	case 0 <= idNum && idNum <= 6: // 千恋万花
 		Path := YuzuConfig.ModulePath
 		Config := YuzuConfig.Config
-		MoeGoeHandle(context, lockNumber, idNum, Path, Config)
+		MoeGoeHandle(context, lockNumber, 0, idNum, Path, Config)
 	case 7 <= idNum && idNum <= 11: // 星光咖啡馆
 		idNum = idNum - 7
 		Path := YuzuConfig.StellaPath
 		Config := YuzuConfig.StellaConfig
-		MoeGoeHandle(context, lockNumber, idNum, Path, Config)
+		MoeGoeHandle(context, lockNumber, 1, idNum, Path, Config)
 	case idNum == 12: // 亚托莉
 		idNum = 0
 		Path := YuzuConfig.AtriPath
 		Config := YuzuConfig.AtriConfig
-		MoeGoeHandle(context, lockNumber, idNum, Path, Config)
+		MoeGoeHandle(context, lockNumber, 2, idNum, Path, Config)
 	case 13 <= idNum && idNum <= 20: // 魔女的夜宴等
 		idNum = idNum - 13
 		Path := YuzuConfig.SabbatPath
 		Config := YuzuConfig.SabbatConfig
-		MoeGoeHandle(context, lockNumber, idNum, Path, Config)
+		MoeGoeHandle(context, lockNumber, 3, idNum, Path, Config)
 	case 21 <= idNum && idNum <= 24: // 缘之空
 		idNum = idNum - 21
 		Path := YuzuConfig.SoraPath
 		Config := YuzuConfig.SoraConfig
-		MoeGoeHandle(context, lockNumber, idNum, Path, Config)
+		MoeGoeHandle(context, lockNumber, 4, idNum, Path, Config)
 	case 25 <= idNum && idNum <= 32: // 灵感满溢的甜蜜创想
 		idNum = idNum - 25
 		Path := YuzuConfig.HamiPath
 		Config := YuzuConfig.HamiConfig
-		MoeGoeHandle(context, lockNumber, idNum, Path, Config)
+		MoeGoeHandle(context, lockNumber, 5, idNum, Path, Config)
+	case 33 <= idNum && idNum <= 38: //星空列车与白的旅行
+		idNum = idNum - 33
+		Path := YuzuConfig.HoshishiroPath
+		Config := YuzuConfig.HoshishiroConfig
+		MoeGoeHandle(context, lockNumber, 6, idNum, Path, Config)
+	case 39 <= idNum && idNum <= 51: //落忆13人模型
+		idNum = idNum - 39
+		Path := YuzuConfig.Luoyi13Path
+		Config := YuzuConfig.Luoyi13Config
+		MoeGoeHandle(context, lockNumber, 7, idNum, Path, Config)
 	default:
 		context.JSON(404, "")
 		return
 	}
 
 }
-func MoeGoeHandle(context *gin.Context, lockNumber int, idNum int, Path string, Config string) {
-	_, _ = io.WriteString(YuzuIn, Path+"\n")
-	_, _ = io.WriteString(YuzuIn, Config+"\n")
-	_, _ = io.WriteString(YuzuIn, "t\n")
+func MoeGoeHandle(context *gin.Context, lockNumber int, modelNum int, idNum int, Path string, Config string) {
 	// 获取文本
 	text, _ := context.GetQuery("text")
-	text = text + "\n"
-	fileName := YuzuConfig.StringFile + "/" + strconv.Itoa(lockNumber) + ".txt" //文件名 与锁对应
-	file, _ := os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0777)
-	file.WriteString(text)
-	file.Close()
-	_, _ = io.WriteString(YuzuIn, fileName+"\n")
-	_, _ = io.WriteString(YuzuIn, strconv.Itoa(idNum)+"\n")
-	// 获取存放路径
 	path := YuzuConfig.Output
 	path = path + "/" + strconv.Itoa(lockNumber) + ".wav" //文件名 与锁对应
-	_, _ = io.WriteString(YuzuIn, path+"\n")
-	// 再次循环
-	_, _ = io.WriteString(YuzuIn, "n\n")
-	// 发送请求
-	YuzuCmd.Wait()
+	myurl := fmt.Sprintf("http://127.0.0.1:%d/voice?model_id=%d&chr_id=%d&typ=t&txt=%s&advance=False",
+		lockNumber+12100, modelNum, idNum, url.QueryEscape(text))
+	// 打开文件
+	file, err := os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0777)
+	if err != nil {
+		context.JSON(404, "")
+		return
+	}
+
+	resp, err := http.Get(myurl)
+	if err != nil {
+		context.JSON(404, "")
+		return
+	}
+
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		context.JSON(404, "")
+		return
+	}
+	_ = file.Close()
+	_ = resp.Body.Close()
 	context.File(path)
 }

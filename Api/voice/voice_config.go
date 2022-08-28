@@ -36,6 +36,10 @@ type Yuzu struct {
 	SoraConfig       string `yaml:"SoraConfig"`       //缘之空模型配置文件路径
 	HamiPath         string `yaml:"HamiPath"`         //灵感满溢的甜蜜创想模型绝对路径
 	HamiConfig       string `yaml:"HamiConfig"`       //灵感满溢的甜蜜创想配置文件绝对路径
+	HoshishiroPath   string `yaml:"HoshishiroPath"`   //星空列车与白的旅行模型绝对路径
+	HoshishiroConfig string `yaml:"HoshishiroConfig"` //星空列车与白的旅行配置文件绝对路径
+	Luoyi13Path      string `yaml:"Luoyi13Path"`      //落忆13人模型绝对路径
+	Luoyi13Config    string `yaml:"Luoyi13Config"`    //落忆13人模型配置文件绝对路径
 }
 
 var AtriConfig Atri
