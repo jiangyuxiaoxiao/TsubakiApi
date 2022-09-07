@@ -27,6 +27,10 @@ yuzu:
   HamiConfig: "" # 灵感满溢的甜蜜创想配置文件的绝对路径 带文件名
   HoshishiroPath: "" # 星空列车与白的旅行模型的绝对路径 带文件名
   HoshishiroConfig: "" # 星空列车与白的旅行模型配置文件的绝对路径 带文件名
+  ChinamiPath: "" # 小河坂千波模型的绝对路径 带文件名
+  ChinamiConfig: "" # 小河坂千波模型配置文件的绝对路径 带文件名
+  YumePath: "" # 乙津梦模型的绝对路径 带文件名
+  YumeConfig: "" # 乙津梦模型配置文件的绝对路径 带文件名
 
 
 

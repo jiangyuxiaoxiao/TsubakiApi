@@ -137,6 +137,26 @@ func yuzu(context *gin.Context) {
 		Path := YuzuConfig.Luoyi13Path
 		Config := YuzuConfig.Luoyi13Config
 		MoeGoeHandle(context, lockNumber, 7, idNum, Path, Config)
+	case idNum == 52: //小河坂千波模型
+		idNum = 0
+		Path := YuzuConfig.ChinamiPath
+		Config := YuzuConfig.ChinamiConfig
+		MoeGoeHandle(context, lockNumber, 8, idNum, Path, Config)
+	case idNum == 53: //乙津梦模型
+		idNum = 0
+		Path := YuzuConfig.YumePath
+		Config := YuzuConfig.YumeConfig
+		MoeGoeHandle(context, lockNumber, 9, idNum, Path, Config)
+	case idNum == 54: //伊莉雅模型
+		idNum = 0
+		Path := YuzuConfig.IllyaPath
+		Config := YuzuConfig.IllyaConfig
+		MoeGoeHandle(context, lockNumber, 10, idNum, Path, Config)
+	case idNum == 55: //伊莉雅模型
+		idNum = 0
+		Path := YuzuConfig.MayuPath
+		Config := YuzuConfig.MayuConfig
+		MoeGoeHandle(context, lockNumber, 11, idNum, Path, Config)
 	default:
 		context.JSON(404, "")
 		return

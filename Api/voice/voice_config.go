@@ -40,6 +40,14 @@ type Yuzu struct {
 	HoshishiroConfig string `yaml:"HoshishiroConfig"` //星空列车与白的旅行配置文件绝对路径
 	Luoyi13Path      string `yaml:"Luoyi13Path"`      //落忆13人模型绝对路径
 	Luoyi13Config    string `yaml:"Luoyi13Config"`    //落忆13人模型配置文件绝对路径
+	ChinamiPath      string `yaml:"ChinamiPath"`      //小河坂千波模型文件绝对路径
+	ChinamiConfig    string `yaml:"ChinamiConfig"`    //小河坂千波模型配置文件绝对路径
+	YumePath         string `yaml:"YumePath"`         //乙津梦模型文件绝对路径
+	YumeConfig       string `yaml:"YumeConfig"`       //乙津梦模型配置文件绝对路径
+	IllyaPath        string `yaml:"IllyaPath"`        //伊莉雅模型配置文件绝对路径
+	IllyaConfig      string `yaml:"IllyaConfig"`      //伊莉雅模型配置文件绝对路径
+	MayuPath         string `yaml:"MayuPath"`         //式部茉优模型文件绝对路径
+	MayuConfig       string `yaml:"MayuConfig"`       //式部茉优模型配置文件绝对路径
 }
 
 var AtriConfig Atri
